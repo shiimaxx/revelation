@@ -29,7 +29,7 @@ func Random() ([]PostItem, error) {
 		Count: 5,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get itemss")
+		return nil, errors.Wrap(err, "failed to get items")
 	}
 
 	var PostItems []PostItem
