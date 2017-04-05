@@ -1,4 +1,5 @@
-package revelation
+//package revelation
+package main
 
 import (
 	"fmt"
@@ -26,18 +27,26 @@ func Random() ([]PostItem, error) {
 	}
 
 	items, err := client.Retrieve(&pocket.RetrieveOpts{
-		Count: 5,
+		State: "unread",
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get items")
 	}
 
 	var PostItems []PostItem
+	counter := 0
 	for _, item := range items.List {
-		PostItems = append(PostItems, PostItem{
-			Title: item.ResolvedTitle,
-			URL:   item.ResolvedURL})
+		if counter < 5 {
+			PostItems = append(PostItems, PostItem{
+				Title: item.ResolvedTitle,
+				URL:   item.ResolvedURL})
+		}
+		counter++
 	}
 
 	return PostItems, nil
+}
+
+func main() {
+	Random()
 }
