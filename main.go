@@ -1,6 +1,9 @@
 package revelation
 
 import (
+	"bytes"
+	"encoding/json"
+	"net/http"
 	"os"
 
 	"github.com/pkg/errors"
@@ -11,11 +14,42 @@ import (
 var (
 	pocketKey   = os.Getenv("POCKET_CONSUMER_KEY")
 	pocketToken = os.Getenv("POCKET_ACCESS_TOKEN")
+	slackURL    = os.Getenv("SLACK_WEBHOOK_URL")
 )
 
 type PostItem struct {
 	Title string
 	URL   string
+}
+
+type slackInput struct {
+	Text string `json:"text"`
+}
+
+func ToSlack(postItems []PostItem) error {
+	client := new(http.Client)
+
+	postText := "本日のキツネ様からのお告げです。\n\n"
+	for i := range postItems {
+		postText += postItems[i].Title + "\n" + postItems[i].URL + "\n\n"
+	}
+	jsonData, err := json.Marshal(&slackInput{Text: postText})
+	if err != nil {
+		return errors.Wrap(err, "failed to parse json")
+	}
+
+	req, err := http.NewRequest("POST", slackURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return errors.Wrap(err, "failed to create http request")
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	_, err = client.Do(req)
+	if err != nil {
+		return errors.Wrap(err, "failed to http request")
+	}
+	return nil
 }
 
 func Random() ([]PostItem, error) {
