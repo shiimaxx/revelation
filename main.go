@@ -1,8 +1,6 @@
-//package revelation
-package main
+package revelation
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/pkg/errors"
@@ -45,8 +43,4 @@ func Random() ([]PostItem, error) {
 	}
 
 	return PostItems, nil
-}
-
-func main() {
-	Random()
 }
