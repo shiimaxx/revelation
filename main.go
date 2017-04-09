@@ -38,7 +38,7 @@ func ToSlack(postItems []PostItem) error {
 		return errors.Wrap(err, "failed to parse json")
 	}
 
-	req, err := http.NewRequest("POST", slackURL, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", slackURL, bytes.NewReader(jsonData))
 	if err != nil {
 		return errors.Wrap(err, "failed to create http request")
 	}
